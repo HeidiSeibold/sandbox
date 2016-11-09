@@ -1,0 +1,123 @@
+\documentclass{beamer}
+
+\begin{document}
+
+%' #' <<preparation, echo=FALSE>>=
+%' #' ## Da war ich schon
+%' #' places_visited <- c("Berlin", "San Francisco", "Leiden", "Eindhoven", 
+%' #'                     "Innsbruck", "Munich", "Palo Alto", "La Spezia", "Elba", 
+%' #'                     "Barcelona", "Lombock", "Bali", "Singapore", "Beijing",
+%' #'                     "Shanghai", "Osaka", "Tokyo")
+%' #' 
+%' #' ## Wo auf der Welt sind diese Orte?
+%' #' library("ggmap")
+%' #' lonlat <- geocode(places_visited) 
+%' #' lonlat
+%' #' my_visits <- data.frame(city = places_visited, lonlat)
+%' #' my_visits
+%' #' 
+%' #' save(my_visits, file = "urlaub.rda")
+%' #' @
+
+
+\begin{frame}
+\begin{columns}
+  \column{0.3\textwidth}
+  \includegraphics[width=\textwidth]{me}
+  
+  \column{0.7\textwidth}
+  \visible<2->{\includegraphics[width=\textwidth]{formel}}\\[2em]
+  \visible<3->{\includegraphics[width=\textwidth]{frage_antwort1}}\\[2em]
+  % \only<4>{\includegraphics[width=\textwidth]{herz}}
+  \visible<4>{\includegraphics[width=\textwidth]{herz1}}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+<<graphiken, fig.show='hold', echo=FALSE, message=FALSE, out.height="\\textheight">>=
+library("ggplot2")
+library("gridExtra")
+
+######## 1 #############
+data(cats, package = "MASS")
+names(cats) <- c("Geschlecht", "Gewicht", "Herzgewicht")
+levels(cats$Geschlecht) <- c("W", "M")
+p1 <- ggplot(data = cats) + 
+  geom_density(aes(x = Gewicht, fill = Geschlecht), alpha = 0.3) +
+  ggtitle("Katzen") +
+  theme_bw() + theme(legend.position = c(0.7, 0.8)) + 
+  # scale_fill_manual(values = c("#CC79A7", "#009E73"))
+  scale_fill_brewer(palette="Set1")
+
+######## 2 #############
+p2 <- ggplot(data = cats) +
+  geom_point(aes(x = Gewicht, y = Herzgewicht, colour = Geschlecht)) + 
+  theme_classic() + theme(legend.position = c(0.25, 0.8)) + 
+  # scale_color_manual(values = c("#CC79A7", "#009E73"))
+  scale_color_brewer(palette="Set1") 
+
+######## 3 #############
+p3 <- ggplot(mtcars, aes(factor(cyl), mpg)) + 
+  geom_violin() + theme_classic()
+# ggplot(movies, aes(year, budget)) + geom_violin()
+# ggplot(movies, aes(year, budget)) +
+#   geom_violin(aes(group = cut_width(year, 10)), scale = "width")
+
+
+######## 4 #############
+p4 <- ggplot(mpg, aes(class, hwy)) + 
+  geom_boxplot() + geom_jitter(width = 0.2)
+
+######## 5 #############
+data(titanic3, package = "PASWR")
+
+titanic <- as.data.frame(Titanic)
+names(titanic) <- c("Klasse", "Geschlecht", "Alter", "Überlebt", "Häufigkeit")
+levels(titanic$Geschlecht) <- c("männlich", "weiblich")
+levels(titanic$Klasse) <- c(1, 2, 3, "Crew")
+levels(titanic$Überlebt) <- c("Nein", "Ja")
+p5 <- ggplot(titanic, aes(x = Klasse, y = Häufigkeit, fill = Überlebt)) +
+  geom_bar(stat = "identity", position = "fill") +
+  scale_fill_manual(values = c("#F0E442", "#009E73")) +
+  ggtitle("Titanic")
+
+
+######## 6 #############
+p6 <- ggplot() + borders("world", colour="gray50", fill="gray50") + coord_quickmap()
+
+
+grid.arrange(p1, p2, 
+             p5, p6, 
+             layout_matrix = rbind(c(1, 2, 3), c(4, 4, 4)))
+
+@
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Wie geht das?}
+\small
+<<karte, eval=TRUE, fig.show='hide', small.mar=TRUE>>=
+library("ggplot2")
+karte <- ggplot() + 
+  borders("world", colour="gray50", fill="gray50") + 
+  coord_quickmap()
+karte
+@
+\includegraphics[width = \textwidth, trim={0 13em 0em 13em}, clip]{figure/karte-1}
+\end{frame}
+
+
+\begin{frame}[fragile]{Heidis Urlaube}
+\small
+<<urlaubskarte, eval=TRUE, fig.show='hide'>>=
+load("urlaub.rda")
+karte_urlaub <- karte + 
+  geom_point(data = my_visits, aes(x = lon, y = lat))
+karte_urlaub
+@
+\includegraphics[width = \textwidth, trim={0 10em 0em 10em}, clip]{figure/urlaubskarte-1}
+\end{frame}
+
+\end{document}
