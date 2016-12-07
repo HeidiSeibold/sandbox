@@ -3,12 +3,7 @@ library("OpenML")
 library("partyNG")
 source("new_ctree_mlr.R")
 
-## parallelization
-# library("parallelMap")
-# ncores <- parallel::detectCores() - 1
-# parallelStartSocket(ncores)
-# parallelSource("new_ctree_mlr.R")
-
+## parallelization -> mclapply
 library("parallel")
 ncores <- detectCores() - 1
 
@@ -37,9 +32,11 @@ taskinfo_relevant <- taskinfo_all[fewmissings & goodnobs & goodnfeat & noloo, ]
 dup <- duplicated(taskinfo_relevant$data.id)
 taskinfo <- taskinfo_relevant[!dup, ]
 
-## obtain list of relevant tasks
+## take a sample of tasks
 set.seed(123)
-taskinfo <- taskinfo[sample(1:nrow(taskinfo), size = 2), ]
+taskinfo <- taskinfo[sample(1:nrow(taskinfo), size = 100), ]
+
+## obtain list of relevant tasks
 tid <- taskinfo$task.id
 tasks <- lapply(tid, getOMLTask)
 names(tasks) <- tid
@@ -47,8 +44,8 @@ names(tasks) <- tid
 ## create leraners
 lrn.list <- list(
   makeLearner("classif.newctree", teststat = "quadratic", splitstat = "quadratic"),
-  # makeLearner("classif.newctree", teststat = "quadratic", splitstat = "maximum"),
-  # makeLearner("classif.newctree", teststat = "maximum", splitstat = "quadratic"),
+  makeLearner("classif.newctree", teststat = "quadratic", splitstat = "maximum"),
+  makeLearner("classif.newctree", teststat = "maximum", splitstat = "quadratic"),
   makeLearner("classif.newctree", teststat = "maximum", splitstat = "maximum")
 )
 
@@ -69,3 +66,4 @@ runs <- mclapply(seq_row(grid), run_lt,
                  mc.cores = ncores)
 
 
+save(runs, file = "ctree_runs.rda")
