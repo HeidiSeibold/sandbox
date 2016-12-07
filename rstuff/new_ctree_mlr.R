@@ -25,14 +25,14 @@ makeRLearner.classif.newctree = function() {
       makeIntegerLearnerParam(id = "nresample", default = 9999L, lower = 1L, requires = quote(testtype=="MonteCarlo")),
       makeLogicalLearnerParam(id = "MIA", default = FALSE),
       makeIntegerLearnerParam(id = "maxsurrogate", default = 0L, lower = 0L),
-      # makeIntegerLearnerParam(id = "mtry", default = Inf, lower = 1),
-      # makeIntegerLearnerParam(id = "maxdepth", default = Inf, lower = 0L),
+      makeIntegerLearnerParam(id = "mtry", default = Inf, lower = 1, special.vals = list(Inf)),
+      makeIntegerLearnerParam(id = "maxdepth", default = Inf, lower = 0L, special.vals = list(Inf)),
       makeLogicalLearnerParam(id = "multiway", default = FALSE),
       makeIntegerLearnerParam(id = "splittry", default = 2L, lower = 1L),
       makeLogicalLearnerParam(id = "majority", default = FALSE),
-      makeLogicalLearnerParam(id = "caseweights", default = TRUE)
-      # makeFunctionParam("applyfun", default = NULL),
-      # makeIntegerLearnerParam(id = "cores", default = NULL, lower = 1L, tunable = FALSE)
+      makeLogicalLearnerParam(id = "caseweights", default = TRUE),
+      makeFunctionLearnerParam("applyfun", default = NULL, special.vals = list(NULL)),
+      makeIntegerLearnerParam(id = "cores", default = NULL, lower = 1L, tunable = FALSE, special.vals = list(NULL))
     ),
     properties = c("twoclass", "multiclass", "missings", "numerics", "factors", "ordered", "prob", "weights"),
     name = "Conditional Inference Trees",
@@ -115,14 +115,14 @@ registerS3method("trainLearner", "newctree", trainLearner.classif.newctree)
 registerS3method("predictLearner", "newctree", predictLearner.classif.newctree)
 
 
-tr <- partyNG::ctree(Species ~ ., data = iris)
-
-lrn = makeLearner("classif.newctree", predict.type = "prob", 
-                           fix.factors.prediction = TRUE)
-task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
-
-# undebug(partyNG:::.urp_tree)
-mod = train(lrn, task)
-
-rdesc = makeResampleDesc(method = "CV", stratify = TRUE)
-r = resample(learner = lrn, task = task, resampling = rdesc, show.info = FALSE)
+# tr <- partyNG::ctree(Species ~ ., data = iris)
+# 
+# lrn = makeLearner("classif.newctree", predict.type = "prob", 
+#                            fix.factors.prediction = TRUE)
+# task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
+# 
+# # undebug(partyNG:::.urp_tree)
+# mod = train(lrn, task)
+# 
+# rdesc = makeResampleDesc(method = "CV", stratify = TRUE)
+# r = resample(learner = lrn, task = task, resampling = rdesc, show.info = FALSE)
