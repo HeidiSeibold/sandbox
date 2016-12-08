@@ -1,5 +1,7 @@
 library("mlr")
 library("OpenML")
+setOMLConfig(arff.reader = "RWeka") 
+
 library("partyNG")
 source("new_ctree_mlr.R")
 
@@ -33,7 +35,8 @@ dup <- duplicated(taskinfo_relevant$data.id)
 taskinfo <- taskinfo_relevant[!dup, ]
 
 ## take a sample of tasks
-set.seed(123)
+# set.seed(123)
+set.seed(1234)
 taskinfo <- taskinfo[sample(1:nrow(taskinfo), size = 100), ]
 
 ## obtain list of relevant tasks
