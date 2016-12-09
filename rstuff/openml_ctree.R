@@ -83,6 +83,12 @@ runs <- mclapply(seq_row(grid), run_lt,
 
 # save(runs, file = "ctree_runs.rda")
 
-if(all(sapply(runs, class) == "OMLMlrRun"))  
-  run.id <- lapply(runs, uploadOMLRun, tags = "study_38",
-                   confirm.upload = FALSE)
+## upload runs
+upload_runs <- function(run){
+  if(class(run) == "OMLMlrRun") {
+    uploadOMLRun(run, tags = "study_38", confirm.upload = FALSE)
+  } else {
+    return(NA)
+  }
+}
+run.id <- lapply(runs, upload_runs)
