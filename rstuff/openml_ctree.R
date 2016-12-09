@@ -53,6 +53,17 @@ lrn.list <- list(
   makeLearner("classif.develpartykit.ctree", teststat = "maximum", splitstat = "maximum")
 )
 
+## creat OMLFlows and upload
+flow.list <- lapply(lrn.list, function(x) {
+  nx <- convertMlrLearnerToOMLFlow(x)
+  nx$description <- "Please use the mlr add-on code 
+  https://github.com/HeidiSeibold/sandbox/blob/95fb76a6c6c645dc5915754b739f2c00b12df542/rstuff/openml_ctree.R
+  and devel partykit package revision 1034: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partyki"
+  return(nx)
+})
+lapply(flow.list, uploadOMLFlow)
+
+
 ## set up grid to run each learner on each task
 grid <- expand.grid(task.id = taskinfo$task.id, 
                     lrn.ind = seq_along(lrn.list))
