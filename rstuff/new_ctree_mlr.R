@@ -40,7 +40,7 @@ makeRLearner.classif.newctree = function() {
 }
 
 #' @export
-trainLearner.classif.newctree = function(.learner, .task, .subset, .weights = NULL, 
+trainLearner.classif.newctree = function(.learner, .task, .subset, .weights, 
                                       teststat, 
                                       splitstat, 
                                       splittest,
@@ -113,13 +113,13 @@ registerS3method("trainLearner", "newctree", trainLearner.classif.newctree)
 registerS3method("predictLearner", "newctree", predictLearner.classif.newctree)
 
 
-tr <- partykit::ctree(Species ~ ., data = iris)
-
-lrn = makeLearner("classif.newctree")
-task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
-
-# undebug(partykit:::.urp_tree)
-mod = train(lrn, task)
+# tr <- partykit::ctree(Species ~ ., data = iris)
+# 
+# lrn = makeLearner("classif.newctree")
+# task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
+# 
+# # undebug(partykit:::.urp_tree)
+# mod = train(lrn, task)
 # 
 # rdesc = makeResampleDesc(method = "CV", stratify = TRUE)
 # r = resample(learner = lrn, task = task, resampling = rdesc, show.info = FALSE)
