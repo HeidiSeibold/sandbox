@@ -1,5 +1,6 @@
 library("mlr")
 library("OpenML")
+options( java.parameters = "-Xmx4g" )
 setOMLConfig(arff.reader = "RWeka") 
 
 library("partyNG")
@@ -37,7 +38,7 @@ taskinfo <- taskinfo_relevant[!dup, ]
 ## take a sample of tasks
 # set.seed(123)
 set.seed(1234)
-taskinfo <- taskinfo[sample(1:nrow(taskinfo), size = 100), ]
+taskinfo <- taskinfo[sample(1:nrow(taskinfo), size = 50), ]
 
 ## obtain list of relevant tasks
 tid <- taskinfo$task.id
@@ -46,10 +47,10 @@ names(tasks) <- tid
 
 ## create leraners
 lrn.list <- list(
-  makeLearner("classif.newctree", teststat = "quadratic", splitstat = "quadratic"),
-  makeLearner("classif.newctree", teststat = "quadratic", splitstat = "maximum"),
-  makeLearner("classif.newctree", teststat = "maximum", splitstat = "quadratic"),
-  makeLearner("classif.newctree", teststat = "maximum", splitstat = "maximum")
+  makeLearner("classif.develpartykit.ctree", teststat = "quadratic", splitstat = "quadratic"),
+  makeLearner("classif.develpartykit.ctree", teststat = "quadratic", splitstat = "maximum"),
+  makeLearner("classif.develpartykit.ctree", teststat = "maximum", splitstat = "quadratic"),
+  makeLearner("classif.develpartykit.ctree", teststat = "maximum", splitstat = "maximum")
 )
 
 ## set up grid to run each learner on each task
@@ -69,4 +70,8 @@ runs <- mclapply(seq_row(grid), run_lt,
                  mc.cores = ncores)
 
 
-save(runs, file = "ctree_runs.rda")
+# save(runs, file = "ctree_runs.rda")
+
+if(all(sapply(runs, class) == "OMLMlrRun"))  
+  run.id <- lapply(runs, uploadOMLRun, tags = "study_38",
+                   confirm.upload = FALSE)

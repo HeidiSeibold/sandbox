@@ -2,9 +2,9 @@ library("mlr")
 
 
 #' @export
-makeRLearner.classif.newctree = function() {
+makeRLearner.classif.develpartykit.ctree = function() {
   makeRLearnerClassif(
-    cl = "classif.newctree",
+    cl = "classif.develpartykit.ctree",
     package = "partykit",
     par.set = makeParamSet(
       makeDiscreteLearnerParam(id = "teststat", default = "quadratic", values = c("quadratic", "maximum")),
@@ -35,12 +35,12 @@ makeRLearner.classif.newctree = function() {
     properties = c("twoclass", "multiclass", "missings", "numerics", "factors", "ordered", "prob", "weights"),
     name = "Conditional Inference Trees",
     short.name = "ctree",
-    note = "Devel partykit package: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
+    note = "Devel partykit package revision 1034: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
   )
 }
 
 #' @export
-trainLearner.classif.newctree = function(.learner, .task, .subset, .weights, 
+trainLearner.classif.develpartykit.ctree = function(.learner, .task, .subset, .weights, 
                                       teststat, 
                                       splitstat, 
                                       splittest,
@@ -96,7 +96,7 @@ trainLearner.classif.newctree = function(.learner, .task, .subset, .weights,
 }
 
 #' @export
-predictLearner.classif.newctree = function(.learner, .model, .newdata, ...) {
+predictLearner.classif.develpartykit.ctree = function(.learner, .model, .newdata, ...) {
   if (.learner$predict.type == "response")
     p = predict(.model$learner.model, newdata = .newdata, type = "response", ...)
   else
@@ -108,14 +108,14 @@ predictLearner.classif.newctree = function(.learner, .model, .newdata, ...) {
 
 
 
-registerS3method("makeRLearner", "newctree", makeRLearner.classif.newctree)
-registerS3method("trainLearner", "newctree", trainLearner.classif.newctree)
-registerS3method("predictLearner", "newctree", predictLearner.classif.newctree)
+registerS3method("makeRLearner", "develpartykit.ctree", makeRLearner.classif.develpartykit.ctree)
+registerS3method("trainLearner", "develpartykit.ctree", trainLearner.classif.develpartykit.ctree)
+registerS3method("predictLearner", "develpartykit.ctree", predictLearner.classif.develpartykit.ctree)
 
 
 # tr <- partykit::ctree(Species ~ ., data = iris)
 # 
-# lrn = makeLearner("classif.newctree")
+# lrn = makeLearner("classif.develpartykit.ctree")
 # task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
 # 
 # # undebug(partykit:::.urp_tree)
