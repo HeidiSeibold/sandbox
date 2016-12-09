@@ -1,13 +1,11 @@
-
-
-
+library("mlr")
 
 
 #' @export
 makeRLearner.classif.newctree = function() {
   makeRLearnerClassif(
     cl = "classif.newctree",
-    package = "partyNG",
+    package = "partykit",
     par.set = makeParamSet(
       makeDiscreteLearnerParam(id = "teststat", default = "quadratic", values = c("quadratic", "maximum")),
       makeDiscreteLearnerParam(id = "splitstat", default = "quadratic", values = c("quadratic", "maximum")),
@@ -37,7 +35,7 @@ makeRLearner.classif.newctree = function() {
     properties = c("twoclass", "multiclass", "missings", "numerics", "factors", "ordered", "prob", "weights"),
     name = "Conditional Inference Trees",
     short.name = "ctree",
-    note = "Install partyNG package via `install.packages('partyNG', repos='http://R-Forge.R-project.org')`"
+    note = "Devel partykit package: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
   )
 }
 
@@ -68,7 +66,7 @@ trainLearner.classif.newctree = function(.learner, .task, .subset, .weights,
                                       applyfun, 
                                       cores, ...) {
   
-  ctrl = learnerArgsToControl(partyNG::ctree_control, 
+  ctrl = learnerArgsToControl(partykit::ctree_control, 
                               teststat, 
                               splitstat, 
                               splittest,
@@ -94,7 +92,7 @@ trainLearner.classif.newctree = function(.learner, .task, .subset, .weights,
                               applyfun, 
                               cores)
   f = getTaskFormula(.task)
-  partyNG::ctree(f, data = getTaskData(.task, .subset), control = ctrl, weights = .weights, ...)
+  partykit::ctree(f, data = getTaskData(.task, .subset), control = ctrl, weights = .weights, ...)
 }
 
 #' @export
@@ -115,13 +113,13 @@ registerS3method("trainLearner", "newctree", trainLearner.classif.newctree)
 registerS3method("predictLearner", "newctree", predictLearner.classif.newctree)
 
 
-# tr <- partyNG::ctree(Species ~ ., data = iris)
+# tr <- partykit::ctree(Species ~ ., data = iris)
 # 
 # lrn = makeLearner("classif.newctree", predict.type = "prob", 
 #                            fix.factors.prediction = TRUE)
 # task = makeClassifTask(id = "tutorial", data = iris, target = "Species")
 # 
-# # undebug(partyNG:::.urp_tree)
+# # undebug(partykit:::.urp_tree)
 # mod = train(lrn, task)
 # 
 # rdesc = makeResampleDesc(method = "CV", stratify = TRUE)
