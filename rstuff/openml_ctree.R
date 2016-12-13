@@ -76,12 +76,9 @@ run_lt <- function(i) {
              learner = lrn.list[[grid$lrn.ind[i]]])
 }
 
-# runs <- lapply(seq_row(grid), run_lt)
 runs <- mclapply(seq_row(grid), run_lt,
                  mc.cores = ncores)
 
-
-# save(runs, file = "ctree_runs.rda")
 
 ## upload runs
 upload_runs <- function(run){
@@ -92,3 +89,43 @@ upload_runs <- function(run){
   }
 }
 run.id <- lapply(runs, upload_runs)
+
+
+## add parameter info
+grid1 <- cbind(grid, 
+               t(sapply(lrn.list, function(x) unlist(x$par.vals)))[grid$lrn.ind,])
+
+## info on run.id
+grid1$run.id <- unlist(run.id)
+
+## add data name
+grid2 <- merge(grid1, taskinfo, all = TRUE)
+
+## add info on whether run is without error
+gridinfo <- cbind(grid2, class = sapply(runs, class))
+gridinfo$errormessage <- sapply(runs, function(x) ifelse(class(x) == "try-error", x, NA))
+
+
+
+
+## get infos form OpenML and merge
+# OMLRuns
+runinfo <- listOMLRuns(tag = "study_38")
+runinfo <- runinfo[runinfo$run.id %in% gridinfo$run.id, ]
+runinfo1 <- merge(gridinfo, runinfo, all = TRUE, by = c("task.id", "run.id"))
+stopifnot(NROW(runinfo1) == 200)
+
+# OMLRunEvaluations
+runeval <- listOMLRunEvaluations(tag = "study_38")
+runeval$task.id <- as.factor(runeval$task.id)
+runeval$setup.id <- as.factor(runeval$setup.id)
+runeval <- runeval[runeval$run.id %in% gridinfo$run.id, ]
+oml_newctree <- merge(runinfo1, runeval, all = TRUE, 
+                      by = c("task.id", "run.id", "setup.id", "flow.id")) # can be deleted once issue is solved https://github.com/openml/openml-r/issues/299
+stopifnot(NROW(oml_newctree) == 200)
+
+
+save(oml_newctree, file = "oml_newctree.rda")
+
+
+
