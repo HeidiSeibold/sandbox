@@ -26,10 +26,13 @@ goodnobs <- taskinfo_all$number.of.instances > 80 &
 goodnfeat <- taskinfo_all$number.of.features > 3 &
   taskinfo_all$number.of.features < 50
 
+# number of classes < 11
+fewclasses <- taskinfo_all$number.of.classes < 11
+
 # no leave-one-out CV
 noloo <- taskinfo_all$estimation.procedure != "Leave one out"
 
-taskinfo_relevant <- taskinfo_all[fewmissings & goodnobs & goodnfeat & noloo, ]
+taskinfo_relevant <- taskinfo_all[fewmissings & goodnobs & goodnfeat & fewclasses & noloo, ]
 
 # each data set only once
 dup <- duplicated(taskinfo_relevant$data.id)

@@ -27,15 +27,15 @@ plot_pa <- ggplot(res,
        aes(#x = setup.id, 
          x = interaction(teststat, splitstat),
          y = predictive.accuracy, 
-         color = task.id,
+         color = number.of.classes,
          group = task.id)) + 
   geom_point(alpha = 0.4) + 
   geom_line(alpha = 0.4) + 
   geom_text(data = res[lastlevel, ], 
             aes(label = task.id, y = pa_forward),
             hjust = 0, nudge_x = 0.05) +
-  theme_classic() +
-  theme(legend.position = "none")
+  theme_classic() #+
+  # theme(legend.position = "none")
 plot_pa 
 ggsave(filename = "ctree_predictive_accuracy_plot.pdf",
        plot = plot_pa)
