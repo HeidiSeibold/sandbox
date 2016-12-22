@@ -47,7 +47,7 @@ run.id <- lapply(runs, upload_runs)
 
 ## add parameter info
 grid1 <- cbind(grid, 
-               t(sapply(lrn.list, function(x) unlist(x$par.vals)))[grid$lrn.ind,])
+               splittest = sapply(lrn.list, function(x) unlist(x$par.vals))[grid$lrn.ind])
 
 ## info on run.id
 grid1$run.id <- unlist(run.id)
