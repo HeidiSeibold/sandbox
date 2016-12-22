@@ -67,7 +67,7 @@ gridinfo$errormessage <- sapply(runs, function(x) ifelse(class(x) == "try-error"
 runinfo <- listOMLRuns(tag = "study_38")
 runinfo <- runinfo[runinfo$run.id %in% gridinfo$run.id, ]
 runinfo1 <- merge(gridinfo, runinfo, all = TRUE, by = c("task.id", "run.id"))
-stopifnot(NROW(runinfo1) == 200)
+
 
 # OMLRunEvaluations
 runeval <- listOMLRunEvaluations(tag = "study_38")
