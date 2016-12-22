@@ -76,7 +76,7 @@ runeval$setup.id <- as.factor(runeval$setup.id)
 runeval <- runeval[runeval$run.id %in% gridinfo$run.id, ]
 oml_newctree <- merge(runinfo1, runeval, all = TRUE, 
                       by = c("task.id", "run.id", "setup.id", "flow.id")) # can be deleted once issue is solved https://github.com/openml/openml-r/issues/299
-stopifnot(NROW(oml_newctree) == 200)
+
 
 
 save(oml_newctree, file = "oml_newctree_splittest.rda")
