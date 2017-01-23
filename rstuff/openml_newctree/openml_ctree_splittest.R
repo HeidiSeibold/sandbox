@@ -3,7 +3,7 @@ set.seed(123)
 
 ## create leraners
 lrn.list <- list(
-  makeLearner("classif.develpartykit.ctree", splittest = TRUE),
+  makeLearner("classif.develpartykit.ctree", splittest = TRUE, testtype = "MonteCarlo"),
   makeLearner("classif.develpartykit.ctree", splittest = FALSE)
 )
 
