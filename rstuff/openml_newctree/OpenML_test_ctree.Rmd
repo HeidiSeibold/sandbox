@@ -8,6 +8,10 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 library("knitr")
+
+## check if all chunks need to run or if this has happened already
+run_all <- !file.exists("runs.rda")
+
 opts_chunk$set(message = FALSE, cache = TRUE, eval=FALSE)
 library("OpenML")
 source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/openml_newctree/new_ctree_mlr.R")
@@ -57,10 +61,10 @@ parameters
 names(lrn.list) <- parameters
 ```
 - create OMLFlow and [upload](http://www.openml.org/f/5439)
-```{r, eval=FALSE}
+```{r, eval = run_all}
 flow <- convertMlrLearnerToOMLFlow(lrn.list[[1]])
 flow$description <- "Please use the mlr add-on code <link> and 
-    devel partykit package revision 1034: <link>"
+    devel partykit package revision 1078: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
 uploadOMLFlow(flow)
 ```
 
@@ -101,7 +105,7 @@ kable(taskinfo[, c("name", "number.of.instances", "number.of.classes",
 grid <- expand.grid(task.id = taskinfo$task.id, parameter = parameters)
 ```
 - Run learners on tasks
-```{r, eval=FALSE}
+```{r, eval=run_all}
 run_lt <- function(i) {
   print(i)
   runTaskMlr(task = tasks[[as.character(grid$task.id[i])]],
@@ -122,7 +126,7 @@ load(file = "runs.rda")
 
 
 ## Upload runs
-```{r, eval=FALSE}
+```{r, eval=run_all}
 run.id <- lapply(runs, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
 grid$run.id <- unlist(run.id)
 save(grid, file = "grid.rda") 
