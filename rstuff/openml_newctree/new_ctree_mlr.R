@@ -36,7 +36,7 @@ makeRLearner.classif.develpartykit.ctree = function() {
     properties = c("twoclass", "multiclass", "missings", "numerics", "factors", "ordered", "prob", "weights"),
     name = "Conditional Inference Trees",
     short.name = "ctree",
-    note = "Devel partykit package revision 1034: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
+    note = "Devel partykit package revision 1078: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
   )
 }
 
