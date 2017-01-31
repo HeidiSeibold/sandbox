@@ -12,7 +12,7 @@ library("knitr")
 ## check if all chunks need to run or if this has happened already
 run_all <- !file.exists("runs.rda")
 
-opts_chunk$set(message = FALSE, cache = TRUE, eval=FALSE)
+opts_chunk$set(message = FALSE, cache = TRUE)
 library("OpenML")
 source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/openml_newctree/new_ctree_mlr.R")
 ```
@@ -50,7 +50,7 @@ lrn.list <- list(
               testtype = "MonteCarlo", nresample = 1000),
   makeLearner("classif.develpartykit.ctree", lookahead = TRUE),
   makeLearner("classif.develpartykit.ctree", MIA = TRUE),
-  # makeLearner("classif.develpartykit.ctree", multiway = TRUE),
+  makeLearner("classif.develpartykit.ctree", multiway = TRUE),
   makeLearner("classif.develpartykit.ctree", intersplit = TRUE),
   makeLearner("classif.develpartykit.ctree", nmax = 20)
 )
@@ -79,9 +79,14 @@ taskinfo0 <- listOMLTasks(task.type = "Supervised Classification",
                           number.of.features = c(3, 50),
                           number.of.missing.values = c(1, 10^6),
                           estimation.procedure = "10-fold Crossvalidation")
+taskinfo1 <- taskinfo0[taskinfo0$max.nominal.att.distinct.values < 25, ]
 
-set.seed(1222)
-taskinfo <- taskinfo0[sample(seq_len(NROW(taskinfo0)), size = 2), ]
+set.seed(1234) 
+taskinfo <- taskinfo1[sample(seq_len(NROW(taskinfo1)), size = 25), ]
+
+
+# set.seed(111) #Läuft unendlich problem
+# taskinfo <- taskinfo0[sample(seq_len(NROW(taskinfo0)), size = 2), ]
 ```
 - Download tasks
 ```{r}
