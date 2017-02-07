@@ -11,6 +11,7 @@ library("knitr")
 
 ## check if all chunks need to run or if this has happened already
 run_all <- !file.exists("runs.rda")
+run_regr_all <- !file.exists("runs_regr.rda")
 
 opts_chunk$set(message = FALSE, cache = TRUE)
 library("OpenML")
@@ -49,7 +50,7 @@ lrn.list <- list(
   makeLearner("classif.develpartykit.ctree", splittest = TRUE,
               testtype = "MonteCarlo", nresample = 1000),
   makeLearner("classif.develpartykit.ctree", lookahead = TRUE),
-  makeLearner("classif.develpartykit.ctree", MIA = TRUE),
+  # makeLearner("classif.develpartykit.ctree", MIA = TRUE),
   makeLearner("classif.develpartykit.ctree", multiway = TRUE),
   makeLearner("classif.develpartykit.ctree", intersplit = TRUE),
   makeLearner("classif.develpartykit.ctree", nmax = 20)
@@ -159,7 +160,7 @@ ggplot(runeval, aes(x = parameter, y = predictive.accuracy,
   geom_point() + geom_line()
 ```
 Similar visualisation can be found on 
-[openml.org/f/5434](http://www.openml.org/f/5434)
+[openml.org/f/5434](http://www.openml.org/f/5458)
 
 
 
@@ -171,60 +172,57 @@ Similar visualisation can be found on
   in ``mlr`` (see [mlr tutorial](http://mlr-org.github.io/mlr-tutorial/devel/html/create_learner/index.html)).
 - create learners
 ```{r}
-lrn.list <- list(
+lrn_regr.list <- list(
   makeLearner("regr.develpartykit.ctree"),
   makeLearner("regr.develpartykit.ctree", splittest = TRUE,
               testtype = "MonteCarlo", nresample = 1000),
   makeLearner("regr.develpartykit.ctree", lookahead = TRUE),
-  makeLearner("regr.develpartykit.ctree", MIA = TRUE),
+  # makeLearner("regr.develpartykit.ctree", MIA = TRUE),
   makeLearner("regr.develpartykit.ctree", multiway = TRUE),
   makeLearner("regr.develpartykit.ctree", intersplit = TRUE),
   makeLearner("regr.develpartykit.ctree", nmax = 20)
 )
 
-parameters <- sapply(lrn.list, function(x) names(x$par.vals[1]))
-parameters[is.na(parameters)] <- "default"
-parameters
-names(lrn.list) <- parameters
+parameters_regr <- sapply(lrn_regr.list, function(x) names(x$par.vals[1]))
+parameters_regr[is.na(parameters_regr)] <- "default"
+parameters_regr
+names(lrn_regr.list) <- parameters_regr
 ```
 - create OMLFlow and [upload](http://www.openml.org/f/5439)
-```{r, eval = run_all}
-flow <- convertMlrLearnerToOMLFlow(lrn.list[[1]])
-flow$description <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R and 
+```{r, eval = run_regr_all}
+flow_regr <- convertMlrLearnerToOMLFlow(lrn_regr.list[[1]])
+flow_regr$description <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R and 
     devel partykit package revision 1082: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
-uploadOMLFlow(flow)
+uploadOMLFlow(flow_regr)
 ```
 
 
 ## Download the relevant tasks
 - Select relevant tasks
 ```{r}
-taskinfo0 <- listOMLTasks(task.type = "Supervised Classification",
-                          evaluation.measures = "predictive_accuracy",
-                          number.of.instances = c(80, 10^6),
-                          number.of.classes = c(2, 10), 
-                          number.of.features = c(3, 50),
-                          number.of.missing.values = c(1, 10^6),
-                          estimation.procedure = "10-fold Crossvalidation")
-taskinfo1 <- taskinfo0[taskinfo0$max.nominal.att.distinct.values < 10, ]
+taskinfo0_regr <- listOMLTasks(task.type = "Supervised Regression",
+                               evaluation.measures = "mean_absolute_error",
+                               number.of.instances = c(80, 10^6),
+                               number.of.features = c(3, 50),
+                               number.of.missing.values = c(1, 10^6),
+                               estimation.procedure = "10-fold Crossvalidation")
+# taskinfo1_regr <- taskinfo0_regr[!is.na(taskinfo0_regr$max.nominal.att.distinct.values) &
+#                                    taskinfo0_regr$max.nominal.att.distinct.values < 10, ]
+taskinfo1_regr <- taskinfo0_regr
 
-set.seed(1221) 
-taskinfo <- taskinfo1[sample(seq_len(NROW(taskinfo1)), size = 4), ]
-
-
-# set.seed(111) #Läuft unendlich problem
-# taskinfo <- taskinfo0[sample(seq_len(NROW(taskinfo0)), size = 2), ]
+set.seed(123) 
+taskinfo_regr <- taskinfo1_regr[sample(seq_len(NROW(taskinfo1_regr)), size = 2), ]
 ```
 - Download tasks
 ```{r}
-tid <- taskinfo$task.id
-tasks <- lapply(tid, getOMLTask)
-names(tasks) <- tid
+tid_regr <- taskinfo_regr$task.id
+tasks_regr <- lapply(tid_regr, function(x) try(getOMLTask(x)))
+names(tasks_regr) <- tid_regr
 ```
 
 ----
 ```{r, echo=FALSE}
-kable(taskinfo[, c("name", "number.of.instances", "number.of.classes",
+kable(taskinfo_regr[, c("name", "number.of.instances", 
                    "number.of.features", "number.of.missing.values")],
       row.names = FALSE)
 ```
@@ -234,54 +232,55 @@ kable(taskinfo[, c("name", "number.of.instances", "number.of.classes",
 ## Create runs (run flows on tasks)
 - Set up grid to run each learner on each task
 ```{r}
-grid <- expand.grid(task.id = taskinfo$task.id, parameter = parameters)
+grid_regr <- expand.grid(task.id = tid_regr, 
+                         parameter = parameters_regr)
 ```
 - Run learners on tasks
 ```{r, eval=run_all}
-run_lt <- function(i) {
+run_regr_lt <- function(i) {
   print(i)
-  runTaskMlr(task = tasks[[as.character(grid$task.id[i])]],
-             learner = lrn.list[[grid$parameter[i]]])
+  runTaskMlr(task = tasks_regr[[as.character(grid_regr$task.id[i])]],
+             learner = lrn_regr.list[[grid_regr$parameter[i]]])
 }
 
-runs <- lapply(seq_row(grid), run_lt)
+runs_regr <- lapply(seq_row(grid_regr), run_regr_lt)
 
 # library("parallel")
 # ncores <- detectCores() - 1
-# runs <- mclapply(seq_row(grid), run_lt, mc.cores = ncores)
-save(runs, file = "runs.rda")
+# runs_regr <- mclapply(seq_row(grid_regr), run_regr_lt, mc.cores = ncores)
+save(runs_regr, file = "runs_regr.rda")
 ```
 
 
 ```{r, echo=FALSE}
-load(file = "runs.rda")
+load(file = "runs_regr.rda")
 ```
 
 
 
 ## Upload runs
 ```{r, eval=run_all}
-run.id <- lapply(runs, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
-grid$run.id <- unlist(run.id)
-save(grid, file = "grid.rda") 
+run_regr.id <- lapply(runs_regr, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
+grid_regr$run.id <- unlist(run_regr.id)
+save(grid_regr, file = "grid_regr.rda") 
 ```
 ```{r, echo=FALSE}
-load(file = "grid.rda")
+load(file = "grid_regr.rda")
 ```
 ```{r}
-grid
+grid_regr
 ```
 
 ## Collect all information
 ```{r}
-runeval <- cbind(grid,
-                 listOMLRunEvaluations(run.id = grid$run.id))
-names(runeval)
+runeval_regr <- cbind(grid_regr,
+                 listOMLRunEvaluations(run.id = grid_regr$run.id))
+names(runeval_regr)
 ```
 
 ## Visualise
 ```{r, fig.height=3, fig.width=7, out.width='900px'}
-ggplot(runeval, aes(x = parameter, y = predictive.accuracy, 
+ggplot(runeval_regr, aes(x = parameter, y = predictive.accuracy, 
                     color = data.name, group = data.name)) +
   geom_point() + geom_line()
 ```
