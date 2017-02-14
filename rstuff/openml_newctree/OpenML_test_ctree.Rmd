@@ -100,13 +100,13 @@ lrn_list_cforest_classif <- lapply(parms_cforest, function(p) {
 ```{r, eval = run_classif_all}
 flow <- convertMlrLearnerToOMLFlow(lrn_list_ctree_classif[[1]])
 flow$description <- flow_descr
-uploadOMLFlow(flow)
+uploadOMLFlow(flow, confirm.upload = FALSE)
 ```
 
 ```{r, eval = run_classif_all}
 flow <- convertMlrLearnerToOMLFlow(lrn_list_cforest_classif[[1]])
 flow$description <- flow_descr
-uploadOMLFlow(flow)
+uploadOMLFlow(flow, confirm.upload = FALSE)
 ```
 
 
@@ -248,13 +248,13 @@ lrn_list_cforest_regr <- lapply(parms_cforest, function(p) {
 ```{r, eval = run_regr_all}
 flow <- convertMlrLearnerToOMLFlow(lrn_list_ctree_regr[[1]])
 flow$description <- flow_descr
-uploadOMLFlow(flow)
+uploadOMLFlow(flow, confirm.upload = FALSE)
 ```
 
 ```{r, eval = run_regr_all}
 flow <- convertMlrLearnerToOMLFlow(lrn_list_cforest_regr[[1]])
 flow$description <- flow_descr
-uploadOMLFlow(flow)
+uploadOMLFlow(flow, confirm.upload = FALSE)
 ```
 
 
