@@ -3,7 +3,7 @@ getwd()
 pkg_dir <- "~/partykit/pkg/devel/partykit"
 tst_dir <- "~/sandbox/rstuff/openml_newctree/"
 knitr::purl("OpenML_test_ctree.Rmd")
-excle <- list("R/as.party.R",
+excl <- list("R/as.party.R",
               "R/glmtree.R",
               "R/lmtree.R",
               "R/meanvartree.R",
