@@ -20,7 +20,7 @@ excl <- list("R/as.party.R",
               "R/varimp.R")
 pc <- package_coverage(path = pkg_dir, type = "none", 
                        code = "source('OpenML_test_ctree.R', echo = TRUE)",
-                       exclusions = excl)
+                       line_exclusions = excl)
 pc
 save(pc, file = "code_coverage.rda")
 
