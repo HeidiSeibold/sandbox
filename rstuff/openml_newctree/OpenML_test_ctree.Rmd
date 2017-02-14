@@ -11,8 +11,16 @@ library("knitr")
 library("ggplot2")
 
 ## check if all chunks need to run or if this has happened already
-run_classif_all <- !file.exists("runs.rda")
-run_regr_all <- !file.exists("runs_regr.rda")
+file_based <- FALSE
+run_classif_all <- ifelse(file_based, !file.exists("grid_classif.rda"), TRUE)
+run_regr_all <- ifelse(file_based, !file.exists("grid_regr.rda"), TRUE)
+
+## run parallel?
+parallel <- TRUE
+if(parallel) {
+  library("parallel")
+  ncores <- detectCores() - 1
+}
 
 flow_descr <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R
 and devel partykit package revision 1118: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
@@ -113,7 +121,7 @@ taskinfo_classif0 <- listOMLTasks(task.type = "Supervised Classification",
 taskinfo_classif1 <- taskinfo_classif0[taskinfo_classif0$max.nominal.att.distinct.values < 10 &
                                          !is.na(taskinfo_classif0$max.nominal.att.distinct.values), ]
 
-set.seed(122) 
+set.seed(012) 
 taskinfo_classif <- taskinfo_classif1[sample(seq_len(NROW(taskinfo_classif1)), size = 2), ]
 ```
 - Download tasks
@@ -146,11 +154,11 @@ run_ctree_classif <- function(i) {
              learner = lrn_list_ctree_classif[[grid_classif$parameter[i]]])
 }
 
-runs_ctree_classif <- lapply(seq_len(NROW(grid_classif)), run_ctree_classif)
-
-# library("parallel")
-# ncores <- detectCores() - 1
-# runs_ctree_classif <- mclapply(seq_len(NROW(grid_classif)), run_ctree_classif, mc.cores = ncores)
+if(parallel) {
+  runs_ctree_classif <- mclapply(seq_len(NROW(grid_classif)), run_ctree_classif, mc.cores = ncores)
+} else {
+  runs_ctree_classif <- lapply(seq_len(NROW(grid_classif)), run_ctree_classif)
+}
 save(runs_ctree_classif, file = "runs_ctree_classif.rda")
 ```
 
@@ -161,11 +169,11 @@ run_cforest_classif <- function(i) {
              learner = lrn_list_cforest_classif[[grid_classif$parameter[i]]])
 }
 
-runs_cforest_classif <- lapply(seq_len(NROW(grid_classif)), run_cforest_classif)
-
-# library("parallel")
-# ncores <- detectCores() - 1
-# runs_cforest_classif <- mclapply(seq_len(NROW(grid_classif)), run_cforest_classif, mc.cores = ncores)
+if(parallel) {
+  runs_cforest_classif <- mclapply(seq_len(NROW(grid_classif)), run_cforest_classif, mc.cores = ncores)
+} else {
+  runs_cforest_classif <- lapply(seq_len(NROW(grid_classif)), run_cforest_classif)
+}
 save(runs_cforest_classif, file = "runs_cforest_classif.rda")
 ```
 
@@ -204,9 +212,6 @@ grid_classif
 ## Collect all information
 ```{r}
 eval_classif <- listOMLRunEvaluations(run.id = grid_classif$run.id)
-# names(eval_ctree_classif) <- paste0(names(eval_ctree_classif), "_ctree")
-# eval_cforest_classif <- listOMLRunEvaluations(run.id = grid_classif$run.id)
-# names(eval_cforest_classif) <- paste0(names(eval_cforest_classif), "_cforest")
 
 runeval_classif <- cbind(grid_classif, eval_classif)
 ```
@@ -281,7 +286,7 @@ taskinfo_regr0 <- listOMLTasks(task.type = "Supervised Regression",
 taskinfo_regr1 <- taskinfo_regr0[taskinfo_regr0$max.nominal.att.distinct.values < 10 &
                                          !is.na(taskinfo_regr0$max.nominal.att.distinct.values), ]
 
-set.seed(122) 
+set.seed(012) 
 taskinfo_regr <- taskinfo_regr1[sample(seq_len(NROW(taskinfo_regr1)), size = 2), ]
 ```
 - Download tasks
@@ -314,11 +319,13 @@ run_ctree_regr <- function(i) {
              learner = lrn_list_ctree_regr[[grid_regr$parameter[i]]])
 }
 
-runs_ctree_regr <- lapply(seq_len(NROW(grid_regr)), run_ctree_regr)
 
-# library("parallel")
-# ncores <- detectCores() - 1
-# runs_ctree_regr <- mclapply(seq_len(NROW(grid_regr)), run_ctree_regr, mc.cores = ncores)
+if(parallel) {
+  runs_ctree_regr <- mclapply(seq_len(NROW(grid_regr)), run_ctree_regr, mc.cores = ncores)
+} else {
+  runs_ctree_regr <- lapply(seq_len(NROW(grid_regr)), run_ctree_regr)
+}
+
 save(runs_ctree_regr, file = "runs_ctree_regr.rda")
 ```
 
@@ -329,11 +336,14 @@ run_cforest_regr <- function(i) {
              learner = lrn_list_cforest_regr[[grid_regr$parameter[i]]])
 }
 
-runs_cforest_regr <- lapply(seq_len(NROW(grid_regr)), run_cforest_regr)
 
-# library("parallel")
-# ncores <- detectCores() - 1
-# runs_cforest_regr <- mclapply(seq_len(NROW(grid_regr)), run_cforest_regr, mc.cores = ncores)
+
+if(parallel) {
+  runs_cforest_regr <- mclapply(seq_len(NROW(grid_regr)), run_cforest_regr, mc.cores = ncores)
+} else {
+  runs_cforest_regr <- lapply(seq_len(NROW(grid_regr)), run_cforest_regr)
+}
+
 save(runs_cforest_regr, file = "runs_cforest_regr.rda")
 ```
 
