@@ -1,0 +1,84 @@
+---
+title: "Check performance of the new ctree and cforest using OpenML"
+author: "Heidi Seibold"
+# output: html_document
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library("knitr")
+opts_chunk$set(message = FALSE)
+library("ggplot2")
+library("OpenML")
+```
+
+
+
+
+# Classification tasks
+
+```{r, echo=FALSE}
+load(file = "grid_classif.rda")
+```
+```{r}
+grid_classif
+```
+
+## Collect all information
+```{r}
+eval_classif <- listOMLRunEvaluations(run.id = grid_classif$run.id)
+
+runeval_classif <- cbind(grid_classif, eval_classif)
+```
+
+## Visualise
+```{r, fig.height=3, fig.width=7, out.width='900px'}
+ggplot(runeval_classif, aes(x = parameter, color = data.name, group = interaction(data.name, type), linetype = type)) +
+  geom_point(aes(y = predictive.accuracy)) + geom_line(aes(y = predictive.accuracy))
+```
+
+
+
+
+-------------------------------------
+
+
+
+# Regression tasks
+
+```{r, echo=FALSE}
+load(file = "grid_regr.rda")
+```
+```{r}
+grid_regr
+```
+
+## Collect all information
+```{r}
+eval_regr <- listOMLRunEvaluations(run.id = grid_regr$run.id)
+
+runeval_regr <- cbind(grid_regr, eval_regr)
+```
+
+## Visualise
+```{r, fig.height=3, fig.width=7, out.width='900px'}
+ggplot(runeval_regr, aes(x = parameter, color = data.name, group = interaction(data.name, type), linetype = type)) +
+  geom_point(aes(y = mean.absolute.error)) + geom_line(aes(y = mean.absolute.error))
+```
+
+
+
+
+--------------------------------
+
+
+# Papers
+
+Casalicchio, G., Bossek, J., Lang, M., Kirchhoff, D., Kerschke, P., Hofner, B., Seibold, H., Vanschoren, J., Bischl, B. (2017).   
+**OpenML: An R Package to Connect to the Networked Machine Learning Platform OpenML.**   
+*ArXiv e-prints*, [arxiv.org/abs/1701.01293](https://arxiv.org/abs/1701.01293).
+ 
+Vanschoren, J., Van Rijn, J. N., Bischl, B., Torgo, L. (2014).    
+**OpenML: networked science in machine learning.**   
+*ACM SIGKDD Explorations Newsletter*, 15(2), 49-60, 
+[doi:10.1145/2641190.2641198](https://doi.org/10.1145/2641190.2641198).
