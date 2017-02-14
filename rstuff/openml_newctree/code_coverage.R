@@ -1,7 +1,14 @@
 library("covr")
+getwd()
+pkg_dir <- "~/partykit/pkg/devel/partykit"
+tst_dir <- "~/sandbox/rstuff/openml_newctree/"
 knitr::purl("OpenML_test_ctree.Rmd")
-pkg_r_dir <- "~/Documents/svn/partykit/pkg/devel/partykit/R/"
-source_files <- paste0(pkg_r_dir, c("ctree.R", "cforest.R", "urp.R"))
-fc <- file_coverage(source_files = source_files,
-              test_files = "OpenML_test_ctree.R")
-fc
+pc <- package_coverage(path = pkg_dir, type = "none", 
+                       code = "OpenML_test_ctree.R")
+pc <- package_coverage(path = pkg_dir, type = "none", 
+                       code = file.path(tst_dir, "OpenML_test_ctree.R"))
+pc <- package_coverage(path = pkg_dir, type = "none", 
+                       code = paste0(tst_dir, "OpenML_test_ctree.R"))
+pc <- package_coverage(path = pkg_dir, type = "none", 
+                       code = "source('OpenML_test_ctree.R', echo = TRUE)")
+pc
