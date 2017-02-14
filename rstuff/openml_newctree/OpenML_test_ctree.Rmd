@@ -21,6 +21,9 @@ if(parallel) {
   ncores <- detectCores() - 1
 }
 
+## number of data sets to look at
+n_sets <- 5
+
 flow_descr <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R
 and devel partykit package revision 1118: https://r-forge.r-project.org/scm/viewvc.php/pkg/devel/?root=partykit"
 
@@ -51,12 +54,12 @@ source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/ope
 Parameters to check:
 ```{r}
 parms_ctree <- list(default = list(),
-                    # splittest = list(splittest = TRUE, testtype = "MonteCarlo", nresample = 500),
+                    splittest = list(splittest = TRUE, testtype = "MonteCarlo", nresample = 500),
                     lookahead = list(lookahead = TRUE),
                     # MIA = list(MIA = TRUE),
                     multiway = list(multiway = TRUE),
-                    intersplit = list(intersplit = TRUE))
-                    # nmax = list(nmax = 20))
+                    intersplit = list(intersplit = TRUE),
+                    nmax = list(nmax = 20))
 str(parms_ctree)
 
 ## add traceing for forest
@@ -121,7 +124,7 @@ taskinfo_classif1 <- taskinfo_classif0[taskinfo_classif0$max.nominal.att.distinc
                                          !is.na(taskinfo_classif0$max.nominal.att.distinct.values), ]
 
 set.seed(012) 
-taskinfo_classif <- taskinfo_classif1[sample(seq_len(NROW(taskinfo_classif1)), size = 2), ]
+taskinfo_classif <- taskinfo_classif1[sample(seq_len(NROW(taskinfo_classif1)), size = n_sets), ]
 ```
 - Download tasks
 ```{r}
@@ -268,7 +271,7 @@ taskinfo_regr1 <- taskinfo_regr0[taskinfo_regr0$max.nominal.att.distinct.values 
                                          !is.na(taskinfo_regr0$max.nominal.att.distinct.values), ]
 
 set.seed(012) 
-taskinfo_regr <- taskinfo_regr1[sample(seq_len(NROW(taskinfo_regr1)), size = 2), ]
+taskinfo_regr <- taskinfo_regr1[sample(seq_len(NROW(taskinfo_regr1)), size = n_sets), ]
 ```
 - Download tasks
 ```{r}
