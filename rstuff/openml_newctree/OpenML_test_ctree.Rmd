@@ -57,7 +57,7 @@ parms_ctree <- list(default = list(),
                     splittest = list(splittest = TRUE, testtype = "MonteCarlo", nresample = 500),
                     lookahead = list(lookahead = TRUE),
                     # MIA = list(MIA = TRUE),
-                    multiway = list(multiway = TRUE),
+                    # multiway = list(multiway = TRUE),
                     intersplit = list(intersplit = TRUE),
                     nmax = list(nmax = 20))
 str(parms_ctree)
