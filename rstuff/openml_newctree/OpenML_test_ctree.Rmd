@@ -30,6 +30,15 @@ and devel partykit package revision 1118: https://r-forge.r-project.org/scm/view
 opts_chunk$set(message = FALSE, cache = TRUE)
 library("OpenML")
 source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/openml_newctree/new_ctree_mlr.R")
+
+## upload function, which checks if the run actually worked 
+upload_run <- function(run){
+  if(class(run) == "OMLMlrRun") {
+    uploadOMLRun(run, tags = "study_38", confirm.upload = FALSE)
+  } else {
+    return(NA)
+  }
+}
 ```
 
 
@@ -189,13 +198,13 @@ load(file = "runs_cforest_classif.rda")
 
 ## Upload runs
 ```{r, eval=run_classif_all}
-run.id_ctree_classif <- lapply(runs_ctree_classif, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
+run.id_ctree_classif <- lapply(runs_ctree_classif, upload_run)
 grid_ctree_classif <- grid_classif
 grid_ctree_classif$type <- "ctree"
 grid_ctree_classif$run.id <- unlist(run.id_ctree_classif)
 ```
 ```{r, eval=run_classif_all}
-run.id_cforest_classif <- lapply(runs_cforest_classif, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
+run.id_cforest_classif <- lapply(runs_cforest_classif, upload_run)
 grid_cforest_classif <- grid_classif
 grid_cforest_classif$type <- "cforest"
 grid_cforest_classif$run.id <- unlist(run.id_cforest_classif)
@@ -341,13 +350,13 @@ load(file = "runs_cforest_regr.rda")
 
 ## Upload runs
 ```{r, eval=run_regr_all}
-run.id_ctree_regr <- lapply(runs_ctree_regr, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
+run.id_ctree_regr <- lapply(runs_ctree_regr, upload_run)
 grid_ctree_regr <- grid_regr
 grid_ctree_regr$type <- "ctree"
 grid_ctree_regr$run.id <- unlist(run.id_ctree_regr)
 ```
 ```{r, eval=run_regr_all}
-run.id_cforest_regr <- lapply(runs_cforest_regr, uploadOMLRun, tags = "study_38", confirm.upload = FALSE)
+run.id_cforest_regr <- lapply(runs_cforest_regr, upload_run)
 grid_cforest_regr <- grid_regr
 grid_cforest_regr$type <- "cforest"
 grid_cforest_regr$run.id <- unlist(run.id_cforest_regr)
