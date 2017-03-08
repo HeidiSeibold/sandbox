@@ -8,7 +8,7 @@ library("batchtools")
 source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/openml_newctree/new_ctree_mlr.R")
 
 ## number of data sets to look at
-n_sets <- 2
+n_sets <- 20
 
 ## description of the flow
 flow_descr <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R
@@ -63,6 +63,7 @@ names(tasks_classif) <- tid_classif
 
 
 ## get regression tasks
+set.seed(123)
 taskinfo_regr0 <- listOMLTasks(task.type = "Supervised Regression",
                                evaluation.measures = "mean_absolute_error",
                                number.of.instances = c(80, 10^6),
@@ -72,7 +73,6 @@ taskinfo_regr0 <- listOMLTasks(task.type = "Supervised Regression",
 taskinfo_regr1 <- taskinfo_regr0[taskinfo_regr0$max.nominal.att.distinct.values < 10 &
                                    !is.na(taskinfo_regr0$max.nominal.att.distinct.values), ]
 
-set.seed(012) 
 taskinfo_regr <- taskinfo_regr1[sample(seq_len(NROW(taskinfo_regr1)), size = n_sets), ]
 
 tid_regr <- taskinfo_regr$task.id
@@ -83,12 +83,12 @@ names(tasks_regr) <- tid_regr
 
 ## add the problem, in our case the tasks from OpenML
 for(task in tasks_classif) {
-  addProblem(name = paste("omltask", task$task.id, sep = "_"), data = task,
+  addProblem(name = task$task.id, data = task,
              reg = reg_classif)
 }
 
 for(task in tasks_regr) {
-  addProblem(name = paste("omltask", task$task.id, sep = "_"), data = task,
+  addProblem(name = task$task.id, data = task,
              reg = reg_regr)
 }
 
@@ -137,8 +137,8 @@ grid <- expand.grid(learner = c("develpartykit.ctree", "develpartykit.cforest"),
                     nmax = c(Inf, 20), 
                     nresample = 500, testtype = "Bonferroni", stringsAsFactors = FALSE)
 grid$testtype[grid$splittest == TRUE] <- "MonteCarlo"
-# grid <- grid[c(1:2, 3:4, 5:6, 9:10, 17:18), ]
-grid <- grid[1:2, ]
+grid <- grid[c(1:2, 3:4, 5:6, 9:10, 17:18), ]
+# grid <- grid[1:2, ]
 
 # correct names for classification and regression
 grid_classif <- grid_regr <- grid
@@ -164,9 +164,34 @@ submitJobs(reg = reg_regr)
 getStatus(reg = reg_classif)
 getStatus(reg = reg_regr)
 
+## collect runs and upload if no errors
+
+# classification
 waitForJobs(reg = reg_classif)
+(err_classif  <- getErrorMessages(reg = reg_classif))
 runs_classif <- reduceResultsList(reg = reg_classif)
 
+if(NROW(err_classif) == 0) {
+  runids_classif <- sapply(runs_classif, uploadOMLRun, 
+                           tag = "study_38", confirm.upload = FALSE) 
+  
+  res_classif <- cbind(run.id = runids_classif, getJobPars(reg = reg_classif))
+  
+  save(res_classif, file = "results_classif_batchtools.rda")
+}
+  
+
+# regression
 waitForJobs(reg = reg_regr)
+(err_regr <- getErrorMessages(reg = reg_regr))
 runs_regr <- reduceResultsList(reg = reg_regr)
+
+if(NROW(err_regr) == 0) {
+  runids_regr <- sapply(runs_regr, uploadOMLRun, 
+                        tag = "study_38", confirm.upload = FALSE) 
+  
+  res_regr <- cbind(run.id = runids_regr, getJobPars(reg = reg_regr))
+  
+  save(res_regr, file = "results_regr_batchtools.rda")
+}
 
