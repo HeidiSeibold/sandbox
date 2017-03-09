@@ -83,12 +83,12 @@ names(tasks_regr) <- tid_regr
 
 ## add the problem, in our case the tasks from OpenML
 for(task in tasks_classif) {
-  addProblem(name = task$task.id, data = task,
+  addProblem(name = as.character(task$task.id), data = task,
              reg = reg_classif)
 }
 
 for(task in tasks_regr) {
-  addProblem(name = task$task.id, data = task,
+  addProblem(name = as.character(task$task.id), data = task,
              reg = reg_regr)
 }
 
