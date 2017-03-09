@@ -8,7 +8,7 @@ library("batchtools")
 source("https://raw.githubusercontent.com/HeidiSeibold/sandbox/master/rstuff/openml_newctree/new_ctree_mlr.R")
 
 ## number of data sets to look at
-n_sets <- 20
+n_sets <- 10
 
 ## description of the flow
 flow_descr <- "Please use the mlr add-on code https://github.com/HeidiSeibold/sandbox/blob/master/rstuff/openml_newctree/new_ctree_mlr.R
