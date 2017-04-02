@@ -41,15 +41,17 @@ plot_route <- plot_estonia +
   geom_path(data = track, aes(x = lon, y = lat), 
             color = "red", size = 1.5) +
   geom_point(data = checkpoints, aes(x = lon_from, y = lat_from),
-             color = "forestgreen", size = 3) +
-  geom_label(data = checkpoints, aes(x = lon_from, y = lat_from, label = from), 
-            hjust = 0.5, vjust = -0.5)
+             color = "forestgreen", size = 3) 
+#   geom_label(data = checkpoints, aes(x = lon_from, y = lat_from, label = from), 
+#             hjust = 0.5, vjust = -0.5)
 plot_route
 
 hotels <- read.csv("hotels.csv")
 plot_route +
-  geom_point(data = hotels, aes(x = lon, y = lat), 
-             color = "blue")
+  geom_point(data = hotels, aes(x = long_booking, y = lat_booking), 
+             color = "blue") +
+  geom_label(data = hotels, aes(x = long_booking, y = lat_booking, label = title), 
+             color = "blue", hjust = 0.5, vjust = -0.5)
 
 
 ### calculate distances in km

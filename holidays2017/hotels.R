@@ -5,7 +5,7 @@ library("ggmap")
 sl <- readLines("https://secure.booking.com/mywishlist.html?aid=356980;tflv=0;wl=kVflMX6AP5PY0MnCffl81ZCuZk8&")
 
 ## extract part with urls needed
-raw <- grep("country-house-in-kipen.html", sl, value = TRUE)
+raw <- grep("20rooms.html", sl, value = TRUE)
 rawsp <- strsplit(raw, split = ",")[[1]]
 
 ## extract part with b_url 
@@ -43,6 +43,13 @@ gc_towns <- geocode(towns)
 
 gc_addresses[is_na_add, ] <- gc_towns[is_na_add, ]
 
-hotels <- data.frame(url_wishlist, addresses, gc_addresses, 
+
+## get title
+title <- sapply(sites, function(site) {
+  title_id <- grep("<title>", site) + 1
+  gsub(pattern = " - Booking.com", replacement = "", site[[title_id]])
+})
+
+hotels <- data.frame(title, url_wishlist, addresses, gc_addresses, 
                      good_address = !is_na_add, coord)
 write.csv(hotels, "hotels.csv", row.names = FALSE)

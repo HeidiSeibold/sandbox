@@ -1,14 +1,14 @@
-"url_wishlist","addresses","lon","lat","good_address","lat_booking","long_booking"
-"https://www.booking.com/hotel/ru/country-house-in-kipen.html?aid=356980","Кипень, улица Центральная 44, 188515 Prokovsino, Russia",NA,NA,FALSE,59.6962959,29.8634711
-"https://www.booking.com/hotel/ru/motel-medved.html?aid=356980","51 km Shosse Vyborg-Torfyanofka, 188908 Torfyanovka, Russia",27.9331347,60.5945633,FALSE,60.5918967,27.9596653
-"https://www.booking.com/hotel/fi/ylijarvi-cottages.html?aid=356980","Unttuantie 171 1A , 2А, 54430 Ylämaa, Finland",NA,NA,FALSE,60.7467194,27.9410563
-"https://www.booking.com/hotel/ru/eco-hotel-les.html?aid=356980","Yuzhniy Bereg ozera Zerkalnoye, 190000 Poselok Zerkalniy, Russia",NA,NA,FALSE,60.2245235,29.1459453
-"https://www.booking.com/hotel/ee/oldhouse-hostel.html?aid=356980","Uus 26, Tallinn City Center, 10111 Tallinn, Estonia",24.7550818,59.4374281,TRUE,59.440837,24.7497404
-"https://www.booking.com/hotel/ee/haaviku-holiday-home.html?aid=356980","Haaviku, Tepelvälja küla, 45403 Sagadi, Estonia",26.0818789,59.537721,FALSE,59.5605057,26.0910702
-"https://www.booking.com/hotel/ru/dom-truvellere-f-amp-f.html?aid=356980","Sankt-Peterburgskiy pereulok 42, 198504 Peterhof, Russia",29.9090618,59.8798676,TRUE,59.8799295,29.9089223
-"https://www.booking.com/hotel/ru/minihotel-st-petersburg.html?aid=356980","Nevskiy prospekt, 3, app. 8, Tsentralny, 191186 Saint Petersburg, Russia",30.3259113,59.9383162,FALSE,59.9369264,30.3127147
-"https://www.booking.com/hotel/ru/guest-house-le-chalet.html?aid=356980","Застройщиков Коттеджи, 197720 Reshetnikovo, Russia",29.7027844,60.2392816,FALSE,60.2322203,29.7122927
-"https://www.booking.com/hotel/ru/apartment-vyborgskaya-4.html?aid=356980","Ulitsa Vyborgskaya 4, 188800 Vyborg, Russia",28.7307368,60.7120271,TRUE,60.7122718,28.7301671
-"https://www.booking.com/hotel/ru/apartamienty-monriepoapart.html?aid=356980","Ulitsa Ardasheva 17 , 188800 Vyborg, Russia",28.7571571,60.7139529,FALSE,60.7253188,28.7329767
-"https://www.booking.com/hotel/fi/best-western-hamina.html?aid=356980","Sibeliuskatu 32, 49400 Hamina, Finland",27.1908285,60.5670355,TRUE,60.5673635,27.1902421
-"https://www.booking.com/hotel/fi/ulrikanhovi.html?aid=356980","Kuhlefeltinkatu 35, 07940 Lovisa, Finland",26.2439591,60.4625379,TRUE,60.4627719,26.2440044
+"title","url_wishlist","addresses","lon","lat","good_address","lat_booking","long_booking"
+"Hotel 20Rooms, Vantaa, Finland","https://www.booking.com/hotel/fi/20rooms.html?aid=356980","KYLAEKAIVONTIE 6, 01350 Vantaa, Finland",25.0439806,60.3033207,TRUE,60.3033207,25.0439806
+"Pierhouse Hotel, Lomonosov, Russia","https://www.booking.com/hotel/ru/pierhouse.html?aid=356980","Naberezhnaya Sidorovskogo Kanala 3, 198412 Lomonosov, Russia",29.774533,59.919233,TRUE,59.9192923,29.7745675
+"Motel Medved, Torfyanovka, Russia","https://www.booking.com/hotel/ru/motel-medved.html?aid=356980","51 km Shosse Vyborg-Torfyanofka, 188908 Torfyanovka, Russia",27.9331347,60.5945633,FALSE,60.5918967,27.9596653
+"Ylijarvi cottages, Ylämaa, Finland","https://www.booking.com/hotel/fi/ylijarvi-cottages.html?aid=356980","Unttuantie 171 1A , 2А, 54430 Ylämaa, Finland",28.00709,60.79924,FALSE,60.7467194,27.9410563
+"Ecohotel Les, Poselok Zerkalniy, Russia","https://www.booking.com/hotel/ru/eco-hotel-les.html?aid=356980","Yuzhniy Bereg ozera Zerkalnoye, 190000 Poselok Zerkalniy, Russia",NA,NA,FALSE,60.2245235,29.1459453
+"OldHouse Hostel, Tallinn, Estonia","https://www.booking.com/hotel/ee/oldhouse-hostel.html?aid=356980","Uus 26, Tallinn City Center, 10111 Tallinn, Estonia",24.7498517,59.4407978,TRUE,59.440837,24.7497404
+"Haaviku Nature Lodge, Sagadi, Estonia","https://www.booking.com/hotel/ee/haaviku-holiday-home.html?aid=356980","Haaviku, Tepelvälja küla, 45403 Sagadi, Estonia",26.0818789,59.537721,FALSE,59.5605057,26.0910702
+"Guesthouse Truveller House F&amp;F, Peterhof, Russia","https://www.booking.com/hotel/ru/dom-truvellere-f-amp-f.html?aid=356980","Sankt-Peterburgskiy pereulok 42, 198504 Peterhof, Russia",29.9090618,59.8798676,TRUE,59.8799295,29.9089223
+"Mini Hotel Nevskaya Classica, Saint Petersburg, Russia","https://www.booking.com/hotel/ru/minihotel-st-petersburg.html?aid=356980","Nevskiy prospekt, 3, app. 8, Tsentralny, 191186 Saint Petersburg, Russia",30.3259113,59.9383162,FALSE,59.9369264,30.3127147
+"Guest House Le Chalet, Reshetnikovo, Russia","https://www.booking.com/hotel/ru/guest-house-le-chalet.html?aid=356980","Застройщиков Коттеджи, 197720 Reshetnikovo, Russia",29.712293,60.23222,TRUE,60.2322203,29.7122927
+"Monrepoapart Apartment, Vyborg, Russia","https://www.booking.com/hotel/ru/apartamienty-monriepoapart.html?aid=356980","Ulitsa Ardasheva 17 , 188800 Vyborg, Russia",28.7571571,60.7139529,FALSE,60.7253188,28.7329767
+"SpaHotel Hamina, Finland","https://www.booking.com/hotel/fi/best-western-hamina.html?aid=356980","Sibeliuskatu 32, 49400 Hamina, Finland",27.1908285,60.5670355,TRUE,60.5673635,27.1902421
+"Guesthouse Ulrikanhovi, Lovisa, Finland","https://www.booking.com/hotel/fi/ulrikanhovi.html?aid=356980","Kuhlefeltinkatu 35, 07940 Lovisa, Finland",26.2439591,60.4625379,TRUE,60.4627719,26.2440044
