@@ -1,0 +1,194 @@
+\documentclass{beamer}
+
+%% figures path
+\usepackage[]{graphicx}
+\graphicspath{{figure/}}
+
+%% font
+\usepackage{avant}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage[T1]{fontenc}
+
+% colors
+\usepackage{xcolor}  % Coloured text etc.
+\definecolor{gr}{HTML}{4bc134}
+\definecolor{gr2}{HTML}{004d00}
+\definecolor{bl}{HTML}{3383c1}
+
+%% tikz
+\usepackage{tikz}
+\usetikzlibrary{positioning, decorations.pathreplacing, calc, fit, shapes, backgrounds}
+\usepackage{fix-cm}
+\usepackage{amsfonts}
+\usepackage{xifthen}
+
+%% title page
+\author{Heidi Seibold}
+\title{Time-to-Event Analysis:\\ Survivor function}
+\date{DataCamp audition, October 2017}
+
+\begin{document}
+
+<<setup, echo=FALSE, message=FALSE>>=
+library("ggplot2")
+theme_set(theme_classic())
+
+library("knitr")
+opts_chunk$set(cache = TRUE)
+
+library("Hmisc")
+library("survival")
+@
+
+
+\thispagestyle{empty}
+\begin{frame}
+\transsplithorizontalout
+\titlepage
+\end{frame}
+
+
+\begin{frame}[fragile]{Time to event data}
+<<echo=FALSE, fig.height=2>>=
+n <- 5
+sdat <- data.frame(individual = factor(rep(1:n, each = 2), levels = n:1), 
+                   type = rep(c("start", "end"), times = n), 
+                   dead = TRUE,
+                   t = c(0, 5, 0, 6, 0, 2, 0, 4, 0, 4))
+
+ggplot(sdat, aes(x = t, y = individual)) + 
+  geom_line(aes(group = individual)) + 
+  geom_point(data = subset(sdat, type == "end"), shape = 4, size = 6) +
+  theme(# axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+        # axis.line.y = element_blank(), 
+        # axis.title.y = element_blank(),
+        axis.line.x = element_line(arrow = arrow(length = unit(0.15, "inches"))))
+@
+<<echo=FALSE, results="asis">>=
+tte <- subset(sdat, type == "end", select = -c(type, dead))
+row.names(tte) <- tte$individual
+latex(tte, rowname = NULL, col.just = c("c", "c"), file = "")
+@
+\end{frame}
+
+\begin{frame}[fragile]{Survivor Function}
+Probability that a person will survive beyond time t.
+<<echo=FALSE, fig.height=4>>=
+p <- seq(0, 5, by = 0.05)
+dfct <- pweibull(p, shape = 0.9, scale = 2)
+
+q <- seq(0, 0.99, by = 0.01)
+t <- qweibull(q, shape = 0.9, scale = 2)
+
+survfct <- data.frame(t = t, s = 1 - q)
+ln <- subset(survfct, s == 0.5)
+ln1 <- ln2 <- rbind(ln, ln)
+ln1[1, 1] <- 0
+ln2[1, 2] <- 0
+txt <- ln
+txt$t <- ln$t + 1
+txt$text <- paste0("S(", round(ln$t, 2), ") = ", round(ln$s, 2))
+
+sp <- ggplot() + 
+  geom_line(data = survfct, aes(x = t, y = s)) + 
+  ylab("S(t)") 
+sp
+@
+\end{frame}
+
+\begin{frame}[fragile]{Survivor Function}
+Probability that a person will survive beyond time t.
+<<echo=FALSE, fig.height=4>>=
+sp +
+  geom_line(data = ln1, aes(x = t, y = s), linetype = 2) +
+  geom_line(data = ln2, aes(x = t, y = s), linetype = 2) +
+  geom_text(data = txt, aes(x = t, y = s, label = text))
+@
+\end{frame}
+
+\begin{frame}[fragile]{Estimating the Survivor Function: Kaplan-Meier}
+\begin{center}
+<<echo=FALSE, results="asis">>=
+latex(tte, rowname = NULL, col.just = c("c", "c"), file = "")
+@
+\vspace{1em}{\Huge $\downarrow$}
+<<echo=FALSE, results="asis">>=
+km <- survfit(Surv(t) ~ 1, data = tte)
+kmdat <- data.frame(t = c(0, km$time), 
+                    n = c(n, km$n.risk),
+                    d = c(0, km$n.event))
+latex(kmdat, rowname = NULL, col.just = c("c", "c", "c"), file = "")
+@
+\end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]{Estimating the Survivor Function: Kaplan-Meier}
+$$ \hat{S}(t) = \prod_{t_{(i)}\leq t} \frac{n_i-d_i}{n_i}$$
+<<echo=FALSE, results="asis">>=
+latex(kmdat, rowname = NULL, col.just = c("c", "c", "c"), file = "")
+@
+\only<1-2>{$$\hat{S}(0) = \frac{5 - 0}{5} = 1$$\\}
+\only<2-3>{$$\hat{S}(2) = \frac{5 - 1}{5} = \frac{4}{5} = 0.8$$\\}
+\only<3-4>{$$\hat{S}(4) = \frac{4}{5} \cdot \frac{4 - 2}{4} = \frac{2}{5} = 0.4$$\\}
+\only<4-5>{$$\hat{S}(5) = \frac{2}{5} \cdot \frac{2 - 1}{2} = \frac{1}{5} = 0.2$$\\}
+\only<5>{$$\hat{S}(6) = \frac{1}{5} \cdot \frac{1 - 1}{1} = 0$$\\}
+
+\end{frame}
+
+\begin{frame}[fragile]{Estimating the Survivor Function: Kaplan-Meier}
+<<echo=FALSE, results="asis", fig.height=3.5>>=
+kmdat$s <- c(1, km$surv)
+latex(kmdat, rowname = NULL, col.just = c("c", "c", "c", "c"), file = "")
+@
+\vspace{-3em}
+<<echo=FALSE, results="asis", fig.height=3.5>>=
+# ggplot(kmdat, aes(x = t, y = s)) + geom_step() + 
+#   ylab("probability of survival")
+plot(s ~ t, data = kmdat, type = "s", 
+     ylab = "S(t)",
+     xlab = "t")
+@
+\end{frame}
+
+\begin{frame}[fragile]{Estimating the Survivor Function: Kaplan-Meier}
+<<fig.height=3.5>>=
+tte_dat <- data.frame(individual = 1:5, 
+                      t = c(5, 6, 2, 4, 4))
+
+library("survival")
+kme <- survfit(Surv(t) ~ 1, data = tte_dat)
+plot(kme, conf.int = FALSE, xlab = "t", 
+     ylab = "S(t)")
+@
+\end{frame}
+
+\begin{frame}[fragile]{Outlook}
+<<echo=FALSE, fig.height=2>>=
+sdat$dead[8] <- FALSE
+
+ggplot(sdat, aes(x = t, y = individual)) + 
+  geom_line(aes(group = individual)) + 
+  geom_point(data = subset(sdat, type == "end"), aes(shape = dead), size = 6) +
+  theme(axis.line.x = element_line(arrow = arrow(length = unit(0.15, "inches")))) +
+  scale_shape_manual(values = c(1, 4))
+@
+<<echo=FALSE, results="asis">>=
+tte <- subset(sdat, type == "end", select = -c(type))
+row.names(tte) <- tte$individual
+latex(tte, rowname = NULL, col.just = c("c", "c", "c"), file = "")
+@
+\end{frame}
+
+
+\begin{frame}[fragile]{}
+\begin{center}
+\Large
+Questions?\\
+Comments?\\[3em]
+\end{center}
+Contact:\\
+\url{heidi.seibold@uzh.ch}\\ \url{@HeidiBaya}
+\end{frame}
+
+\end{document}
